@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>میرا AI اسسٹنٹ</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#111827;
+  color:white;
+  text-align:center;
+}
+.container{
+  padding:25px 15px;
+}
+h1{
+  margin-bottom:10px;
+}
+#chat{
+  background:#1f2937;
+  min-height:300px;
+  border-radius:15px;
+  padding:15px;
+  margin:20px 0;
+  text-align:right;
+}
+input{
+  width:65%;
+  padding:14px;
+  border-radius:10px;
+  border:0;
+  font-size:16px;
+}
+button{
+  padding:14px 18px;
+  margin:5px;
+  border:0;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  font-size:16px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h1>🤖 میرا AI اسسٹنٹ</h1>
+
+<div id="chat">
+  السلام علیکم! میں آپ کا اسسٹنٹ ہوں۔ 👋
+</div>
+
+<input id="msg" placeholder="یہاں لکھیں...">
+<button onclick="talk()">بھیجیں</button>
+<button onclick="timeNow()">وقت</button>
+<button onclick="googleOpen()">Google</button>
+
+</div>
+
+<script>
+function talk(){
+  let msg=document.getElementById("msg").value;
+  let chat=document.getElementById("chat");
+
+  if(msg.trim()=="") return;
+
+  chat.innerHTML += "<p><b>آپ:</b> "+msg+"</p>";
+
+  let reply="میں ابھی ایک سادہ AI اسسٹنٹ ہوں۔ آپ نے کہا: "+msg;
+
+  chat.innerHTML += "<p><b>Assistant:</b> "+reply+"</p>";
+
+  document.getElementById("msg").value="";
+}
+
+function timeNow(){
+  let now=new Date();
+  let time=now.toLocaleTimeString("ur-PK");
+  document.getElementById("chat").innerHTML +=
+  "<p><b>وقت:</b> "+time+"</p>";
+}
+
+function googleOpen(){
+  window.open("https://www.google.com","_blank");
+}
+</script>
+
+</body>
+</html>
