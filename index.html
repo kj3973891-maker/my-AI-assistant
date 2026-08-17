@@ -93,3 +93,630 @@ function googleOpen(){
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>میرا AI Assistant</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#0f172a;
+  color:white;
+}
+.app{
+  max-width:600px;
+  margin:auto;
+  padding:20px;
+}
+h1{text-align:center}
+#chat{
+  background:#1e293b;
+  border-radius:15px;
+  padding:15px;
+  min-height:280px;
+  margin:15px 0;
+  overflow:auto;
+}
+.msg{
+  padding:10px;
+  margin:8px 0;
+  border-radius:10px;
+  background:#334155;
+}
+input{
+  width:100%;
+  box-sizing:border-box;
+  padding:14px;
+  border-radius:10px;
+  border:0;
+  margin-bottom:10px;
+  font-size:16px;
+}
+button{
+  padding:13px 16px;
+  margin:4px;
+  border:0;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  font-size:15px;
+}
+.voice{
+  background:#16a34a;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<h1>🤖 میرا AI Assistant</h1>
+
+<div id="chat">
+  <div class="msg">
+    السلام علیکم! میں آپ کا Assistant ہوں۔<br>
+    آپ بول کر یا لکھ کر حکم دے سکتے ہیں۔
+  </div>
+</div>
+
+<input id="msg" placeholder="مثلاً: Google پر PUBG سرچ کرو">
+
+<button onclick="sendCommand()">بھیجیں</button>
+<button class="voice" onclick="startVoice()">🎤 بولیں</button>
+
+<br>
+
+<button onclick="tellTime()">🕐 وقت</button>
+<button onclick="openGoogle()">🔎 Google</button>
+<button onclick="openWhatsApp()">💬 WhatsApp</button>
+<button onclick="openYouTube()">▶️ YouTube</button>
+
+</div>
+
+<script>
+
+const chat = document.getElementById("chat");
+const input = document.getElementById("msg");
+
+function addMessage(title,text){
+  chat.innerHTML +=
+  `<div class="msg"><b>${title}:</b><br>${text}</div>`;
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function speak(text){
+  if("speechSynthesis" in window){
+    let voice = new SpeechSynthesisUtterance(text);
+    voice.lang = "ur-PK";
+    speechSynthesis.speak(voice);
+  }
+}
+
+function sendCommand(){
+
+  let command = input.value.trim();
+
+  if(!command) return;
+
+  addMessage("آپ",command);
+
+  command = command.toLowerCase();
+
+  /* Google Search */
+  if(command.includes("google") ||
+     command.includes("سرچ") ||
+     command.includes("تلاش")){
+
+    let search = input.value
+      .replace(/google/gi,"")
+      .replace(/سرچ/gi,"")
+      .replace(/تلاش/gi,"")
+      .trim();
+
+    if(!search) search = "Google";
+
+    addMessage("Assistant",
+      "میں Google پر تلاش کھول رہا ہوں۔");
+
+    speak("میں گوگل پر تلاش کھول رہا ہوں");
+
+    window.open(
+      "https://www.google.com/search?q="+
+      encodeURIComponent(search),
+      "_blank"
+    );
+
+    input.value="";
+    return;
+  }
+
+  /* WhatsApp */
+  if(command.includes("whatsapp") ||
+     command.includes("واٹس ایپ")){
+
+    addMessage("Assistant","WhatsApp کھول رہا ہوں۔");
+    speak("واٹس ایپ کھول رہا ہوں");
+
+    window.open("https://web.whatsapp.com/","_blank");
+
+    input.value="";
+    return;
+  }
+
+  /* YouTube */
+  if(command.includes("youtube") ||
+     command.includes("یوٹیوب")){
+
+    addMessage("Assistant","YouTube کھول رہا ہوں۔");
+    speak("یوٹیوب کھول رہا ہوں");
+
+    window.open("https://www.youtube.com/","_blank");
+
+    input.value="";
+    return;
+  }
+
+  /* Time */
+  if(command.includes("time") ||
+     command.includes("ٹائم") ||
+     command.includes("وقت")){
+
+    tellTime();
+    input.value="";
+    return;
+  }
+
+  /* Date */
+  if(command.includes("date") ||
+     command.includes("تاریخ")){
+
+    let date = new Date().toLocaleDateString("ur-PK");
+
+    addMessage("Assistant","آج کی تاریخ: "+date);
+    speak("آج کی تاریخ "+date);
+
+    input.value="";
+    return;
+  }
+
+  /* Help */
+  if(command.includes("help") ||
+     command.includes("مدد")){
+
+    let text =
+    "آپ یہ کمانڈ دے سکتے ہیں:<br>"+
+    "• Google پر کچھ سرچ کرو<br>"+
+    "• WhatsApp کھولو<br>"+
+    "• YouTube کھولو<br>"+
+    "• وقت بتاؤ<br>"+
+    "• تاریخ بتاؤ";
+
+    addMessage("Assistant",text);
+    speak("میں Google، WhatsApp، YouTube، وقت اور تاریخ کے کام کر سکتا ہوں");
+
+    input.value="";
+    return;
+  }
+
+  /* Unknown command */
+
+  let reply =
+  "میں نے آپ کی بات سمجھی، لیکن اس کام کے لیے ابھی مجھے مزید فیچر دینا ہوگا۔";
+
+  addMessage("Assistant",reply);
+  speak(reply);
+
+  input.value="";
+}
+
+
+/* Time Function */
+
+function tellTime(){
+
+  let time = new Date().toLocaleTimeString("ur-PK");
+
+  addMessage("Assistant","ابھی وقت ہے: "+time);
+
+  speak("ابھی وقت ہے "+time);
+}
+
+
+/* Google */
+
+function openGoogle(){
+
+  addMessage("Assistant","Google کھول رہا ہوں۔");
+  window.open("https://www.google.com","_blank");
+
+}
+
+
+/* WhatsApp */
+
+function openWhatsApp(){
+
+  addMessage("Assistant","WhatsApp کھول رہا ہوں۔");
+  window.open("https://web.whatsapp.com/","_blank");
+
+}
+
+
+/* YouTube */
+
+function openYouTube(){
+
+  addMessage("Assistant","YouTube کھول رہا ہوں۔");
+  window.open("https://www.youtube.com","_blank");
+
+}
+
+
+/* Voice Recognition */
+
+function startVoice(){
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+
+    alert("آپ کے browser میں Voice Recognition دستیاب نہیں ہے۔");
+
+    return;
+  }
+
+  let recognition = new SpeechRecognition();
+
+  recognition.lang = "ur-PK";
+  recognition.interimResults = false;
+  recognition.continuous = false;
+
+  addMessage("Assistant","🎤 سن رہا ہوں...");
+
+  recognition.start();
+
+  recognition.onresult = function(event){
+
+    let text =
+      event.results[0][0].transcript;
+
+    input.value = text;
+
+    sendCommand();
+  };
+
+  recognition.onerror = function(){
+
+    addMessage(
+      "Assistant",
+      "آواز سننے میں مسئلہ آیا۔ دوبارہ کوشش کریں۔"
+    );
+
+  };
+
+}
+
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>میرا AI Assistant</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#0f172a;
+  color:white;
+}
+.app{
+  max-width:600px;
+  margin:auto;
+  padding:20px;
+}
+h1{text-align:center}
+#chat{
+  background:#1e293b;
+  border-radius:15px;
+  padding:15px;
+  min-height:280px;
+  margin:15px 0;
+  overflow:auto;
+}
+.msg{
+  padding:10px;
+  margin:8px 0;
+  border-radius:10px;
+  background:#334155;
+}
+input{
+  width:100%;
+  box-sizing:border-box;
+  padding:14px;
+  border-radius:10px;
+  border:0;
+  margin-bottom:10px;
+  font-size:16px;
+}
+button{
+  padding:13px 16px;
+  margin:4px;
+  border:0;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  font-size:15px;
+}
+.voice{
+  background:#16a34a;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<h1>🤖 میرا AI Assistant</h1>
+
+<div id="chat">
+  <div class="msg">
+    السلام علیکم! میں آپ کا Assistant ہوں۔<br>
+    آپ بول کر یا لکھ کر حکم دے سکتے ہیں۔
+  </div>
+</div>
+
+<input id="msg" placeholder="مثلاً: Google پر PUBG سرچ کرو">
+
+<button onclick="sendCommand()">بھیجیں</button>
+<button class="voice" onclick="startVoice()">🎤 بولیں</button>
+
+<br>
+
+<button onclick="tellTime()">🕐 وقت</button>
+<button onclick="openGoogle()">🔎 Google</button>
+<button onclick="openWhatsApp()">💬 WhatsApp</button>
+<button onclick="openYouTube()">▶️ YouTube</button>
+
+</div>
+
+<script>
+
+const chat = document.getElementById("chat");
+const input = document.getElementById("msg");
+
+function addMessage(title,text){
+  chat.innerHTML +=
+  `<div class="msg"><b>${title}:</b><br>${text}</div>`;
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function speak(text){
+  if("speechSynthesis" in window){
+    let voice = new SpeechSynthesisUtterance(text);
+    voice.lang = "ur-PK";
+    speechSynthesis.speak(voice);
+  }
+}
+
+function sendCommand(){
+
+  let command = input.value.trim();
+
+  if(!command) return;
+
+  addMessage("آپ",command);
+
+  command = command.toLowerCase();
+
+  /* Google Search */
+  if(command.includes("google") ||
+     command.includes("سرچ") ||
+     command.includes("تلاش")){
+
+    let search = input.value
+      .replace(/google/gi,"")
+      .replace(/سرچ/gi,"")
+      .replace(/تلاش/gi,"")
+      .trim();
+
+    if(!search) search = "Google";
+
+    addMessage("Assistant",
+      "میں Google پر تلاش کھول رہا ہوں۔");
+
+    speak("میں گوگل پر تلاش کھول رہا ہوں");
+
+    window.open(
+      "https://www.google.com/search?q="+
+      encodeURIComponent(search),
+      "_blank"
+    );
+
+    input.value="";
+    return;
+  }
+
+  /* WhatsApp */
+  if(command.includes("whatsapp") ||
+     command.includes("واٹس ایپ")){
+
+    addMessage("Assistant","WhatsApp کھول رہا ہوں۔");
+    speak("واٹس ایپ کھول رہا ہوں");
+
+    window.open("https://web.whatsapp.com/","_blank");
+
+    input.value="";
+    return;
+  }
+
+  /* YouTube */
+  if(command.includes("youtube") ||
+     command.includes("یوٹیوب")){
+
+    addMessage("Assistant","YouTube کھول رہا ہوں۔");
+    speak("یوٹیوب کھول رہا ہوں");
+
+    window.open("https://www.youtube.com/","_blank");
+
+    input.value="";
+    return;
+  }
+
+  /* Time */
+  if(command.includes("time") ||
+     command.includes("ٹائم") ||
+     command.includes("وقت")){
+
+    tellTime();
+    input.value="";
+    return;
+  }
+
+  /* Date */
+  if(command.includes("date") ||
+     command.includes("تاریخ")){
+
+    let date = new Date().toLocaleDateString("ur-PK");
+
+    addMessage("Assistant","آج کی تاریخ: "+date);
+    speak("آج کی تاریخ "+date);
+
+    input.value="";
+    return;
+  }
+
+  /* Help */
+  if(command.includes("help") ||
+     command.includes("مدد")){
+
+    let text =
+    "آپ یہ کمانڈ دے سکتے ہیں:<br>"+
+    "• Google پر کچھ سرچ کرو<br>"+
+    "• WhatsApp کھولو<br>"+
+    "• YouTube کھولو<br>"+
+    "• وقت بتاؤ<br>"+
+    "• تاریخ بتاؤ";
+
+    addMessage("Assistant",text);
+    speak("میں Google، WhatsApp، YouTube، وقت اور تاریخ کے کام کر سکتا ہوں");
+
+    input.value="";
+    return;
+  }
+
+  /* Unknown command */
+
+  let reply =
+  "میں نے آپ کی بات سمجھی، لیکن اس کام کے لیے ابھی مجھے مزید فیچر دینا ہوگا۔";
+
+  addMessage("Assistant",reply);
+  speak(reply);
+
+  input.value="";
+}
+
+
+/* Time Function */
+
+function tellTime(){
+
+  let time = new Date().toLocaleTimeString("ur-PK");
+
+  addMessage("Assistant","ابھی وقت ہے: "+time);
+
+  speak("ابھی وقت ہے "+time);
+}
+
+
+/* Google */
+
+function openGoogle(){
+
+  addMessage("Assistant","Google کھول رہا ہوں۔");
+  window.open("https://www.google.com","_blank");
+
+}
+
+
+/* WhatsApp */
+
+function openWhatsApp(){
+
+  addMessage("Assistant","WhatsApp کھول رہا ہوں۔");
+  window.open("https://web.whatsapp.com/","_blank");
+
+}
+
+
+/* YouTube */
+
+function openYouTube(){
+
+  addMessage("Assistant","YouTube کھول رہا ہوں۔");
+  window.open("https://www.youtube.com","_blank");
+
+}
+
+
+/* Voice Recognition */
+
+function startVoice(){
+
+  const SpeechRecognition =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if(!SpeechRecognition){
+
+    alert("آپ کے browser میں Voice Recognition دستیاب نہیں ہے۔");
+
+    return;
+  }
+
+  let recognition = new SpeechRecognition();
+
+  recognition.lang = "ur-PK";
+  recognition.interimResults = false;
+  recognition.continuous = false;
+
+  addMessage("Assistant","🎤 سن رہا ہوں...");
+
+  recognition.start();
+
+  recognition.onresult = function(event){
+
+    let text =
+      event.results[0][0].transcript;
+
+    input.value = text;
+
+    sendCommand();
+  };
+
+  recognition.onerror = function(){
+
+    addMessage(
+      "Assistant",
+      "آواز سننے میں مسئلہ آیا۔ دوبارہ کوشش کریں۔"
+    );
+
+  };
+
+}
+
+</script>
+
+</body>
+</html>
